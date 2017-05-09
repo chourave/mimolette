@@ -93,7 +93,6 @@ interpreted by `quick-check`. Instead, `stest/check` passes it as the `num-tests
 parameter to `quick-check`.
 
 ## Known limitations
-
 - Currently, Clojure and ClojureScript need to require different namespaces. I
   could fix this either with elaborate trickery, or by waiting for ClojureScript
   to add the alpha suffix to its spec namespaces. I’m choosing the latter.
@@ -101,17 +100,30 @@ parameter to `quick-check`.
   out of the original macro, they should be easier to test.
 - The handling of options is incredibly convoluted and ought to be straightened
   out.
-## License
 
-Mimolette started its life on Stack Overflow. Timothy Washington 
+## Project history
+I ([Frederic Merizen](https://www.linkedin.com/in/fredericmerizen)) am still
+trying to get get attribution right for this library. As far as I can tell,
+here’s how it goes. I would like to thank Timothy Washington for pointing me to
+the clojurians slack source.
+
+On the November 4th 2016, [Kenny Williams](https://clojurians.slack.com/team/kenny)
+published his ‘[solution](https://clojurians.slack.com/files/kenny/F2XV8TRC3/clojure_spec_test___clojure_test.clj)
+to integrating `clojure.spec.test/check` with `clojure.test`’ on the
+[\#clojure-spec](https://clojurians.slack.com/messages/C1B1BB2Q3)
+channel of the [clojurians](https://clojurians.slack.com) slack.
+
+On November 19th 2016, [Timothy Washington](http://stackoverflow.com/users/375616/nutritioustim) 
 [asked](http://stackoverflow.com/questions/40697841/howto-include-clojure-specd-functions-in-a-test-suite)
-how to run spec checks from `clojure.test`, and then answered his own question
-by writing the `defspec-test` macro.
+on Stack Overflow how to run spec checks from `clojure.test`. On November 21st
+he answered his own question with the `defspec-test` macro from the clojurians
+slack.
 
-I (Frederic Merizen) wanted to use it for my own projects. I’m no great fan of
-reuse by cut and paste, and so I decided to give it a home on Clojars,  added
-ClojureScript support, and broke the macro down into simpler components, and
-thus Mimolette was born.
+This is were I found the macro. I wanted to use it for my own projects. I’m no
+great fan of reuse by cut and paste, and so I decided to give it a home on
+Clojars,  added ClojureScript support, and broke the macro down into simpler
+components, and thus Mimolette was born.
 
-Distributed under the [MIT license](LICENSE.txt).  
-Copyright &copy; 2017 [Frederic Merizen](https://www.linkedin.com/in/fredericmerizen/) & [Timothy Washington](http://stackoverflow.com/users/375616/nutritioustim).
+## License
+Distributed under the [MIT license](LICENSE.txt).
+Copyright &copy; 2017 Frederic Merizen & Kenny Williams.
