@@ -23,9 +23,7 @@
 (ns plumula.mimolette
   (:require [clojure.string :as string]
             [clojure.test #?@(:clj (:refer [*load-tests*])) :as test]
-    #?(:clj [swiss.arrows :refer [-!>]]
-       :cljs [cljs.analyzer :refer [*load-tests*]]))
-  #?(:cljs (:require-macros [swiss.arrows :refer [-!>]])))
+    #?(:cljs [cljs.analyzer :refer [*load-tests*]])))
 
 (defn success-report
   "Returns a sequence of one message. The message is suitable for consumption by
@@ -90,10 +88,11 @@
             (doseq [:let [reporter (if success? report-success report-failure)
                           reports (reporter results)]
                     report reports]
-              (test/do-report report)))]
+              (test/do-report report))
+            success?)]
     (-> results
         success?
-        (-!> print-report!))))
+        print-report!)))
 
 (defn reporter
   "Returns a function that

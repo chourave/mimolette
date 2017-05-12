@@ -24,7 +24,6 @@
 (require '[plumula.soles :refer :all])
 
 (add-dependencies!
-  (:compile org.clojure/test.check
-            swiss-arrows))
+  (:compile org.clojure/test.check))
 
 (soles! 'plumula/mimolette)
