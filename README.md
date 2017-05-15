@@ -90,17 +90,24 @@ forgiving here.
 - The handling of options is incredibly convoluted and ought to be straightened
   out.
 
-## Project history
-I ([Frederic Merizen](https://www.linkedin.com/in/fredericmerizen)) am still
-trying to get get attribution right for this library. As far as I can tell,
-here’s how it goes. I would like to thank Timothy Washington for pointing me to
-the clojurians slack source.
+## Project history and acknowledgements
+The notable changes to this project are documented in the
+[change log](CHANGELOG.md).
 
-On the November 4th 2016, [Kenny Williams](https://clojurians.slack.com/team/kenny)
-published his ‘[solution](https://clojurians.slack.com/files/kenny/F2XV8TRC3/clojure_spec_test___clojure_test.clj)
+I ([Frederic Merizen](https://www.linkedin.com/in/fredericmerizen)) am not the
+original author of this library.
+
+As far as I can tell, the macro that evolved to
+become Mimolette made its first public appearance on November 4th 2016, when
+[Kenny Williams](https://github.com/kennyjwilli) published his
+‘[solution](https://clojurians.slack.com/files/kenny/F2XV8TRC3/clojure_spec_test___clojure_test.clj)
 to integrating `clojure.spec.test/check` with `clojure.test`’ on the
 [\#clojure-spec](https://clojurians.slack.com/messages/C1B1BB2Q3)
 channel of the [clojurians](https://clojurians.slack.com) slack.
+
+He didn’t release the macro as a lib at the time, partly because it wasn’t clear
+if the practice it enabled was actually recommended, and partly because he felt
+that the core team might be working on something similar.
 
 On November 19th 2016, [Timothy Washington](http://stackoverflow.com/users/375616/nutritioustim) 
 [asked](http://stackoverflow.com/questions/40697841/howto-include-clojure-specd-functions-in-a-test-suite)
@@ -112,6 +119,9 @@ This is were I found the macro. I wanted to use it for my own projects. I’m no
 great fan of reuse by cut and paste, and so I decided to give it a home on
 Clojars,  added ClojureScript support, and broke the macro down into simpler
 components, and thus Mimolette was born.
+
+I would like to thank Kenny and Timothy for their feedback and helping me piece
+together this history.
 
 ## License
 Distributed under the [MIT license](LICENSE.txt).
