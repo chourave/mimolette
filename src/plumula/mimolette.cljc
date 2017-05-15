@@ -21,117 +21,76 @@
 ; SOFTWARE.
 
 (ns plumula.mimolette
-  (:require [clojure.string :as string]
-            [clojure.test #?@(:clj (:refer [*load-tests*])) :as test]
-    #?(:cljs [cljs.analyzer :refer [*load-tests*]])))
+  (:require [clojure.test :as test]
+            [plumula.mimolette.impl :as mimo])
+  #?(:cljs (:require-macros plumula.mimolette)))
 
-(defn success-report
-  "Returns a sequence of one message. The message is suitable for consumption by
-  `test/do-report`, that reports that the tests corresponding to `results`
-  succeeded. Should only be called if all tests did succeed.
+(defn cljs?
+  "True if we are macro-expanding into ClojureScript."
+  []
+  (boolean (find-ns 'cljs.analyzer)))
 
-  `results` should be the result of `stest/check`
-  where `stest` is clojure.spec.test (or its alpha or cljs equivalent).
-  "
-  [results]
-  [{:type    :pass
-    :message (str "Generative tests pass for "
-                  (string/join ", " (map :sym results)))}])
-
-(defn failure-report
-  "Returns a sequence of messages, each message suitable for consumption by
-  `test/do-report`. The messages describe the test failures in `results`.
-
-  Arguments:
-  - `abbrev-result` should be `stest/abbrev-result`
-  - `explain-out` should be `spec/explain-out`
-  - `getval` should be `::stest/val`
-  - `results` should be the result of `stest/check`
-
-  where `stest` is `clojure.spec.test` and `spec` is `clojure.spec` (or their
-  alpha or cljs equivalent).
-  "
-  [abbrev-result explain-out getval results]
-  (for [failed-check (filter :failure results)
-        :let [r (abbrev-result failed-check)
-              failure (:failure r)]]
-    {:type     :fail
-     :message  (with-out-str (explain-out failure))
-     :expected (->> r :spec rest (apply hash-map) :ret)
-     :actual   (if (instance? #?(:clj Throwable :cljs js/Error) failure)
-                 failure
-                 (getval failure))}))
-
-(defn success?
-  "Takes the result of `stest/check`, and returns a boolean:
-  - true if all checks succeded
-  - false otherwise
-  "
-  [results]
-  (every? nil? (map :failure results)))
-
-(defn report-results!
-  "Given a list of `results` from `stest/check`
-  - returns true if all checks succeeded, and false otherwise
-  - report the results to clojure.test, using `report-success` or
-    `report-failure` to format the results depending on whether all tests
-    succeeded or some failed
-
-  Arguments:
-  - `results` should be the result of `stest/check`
-  - `report-success` and `report-failure` should be functions that take the
-    result of `stest/check` and return a list of maps in the format expected
-    by `clojure.test/do-report`
-  "
-  [report-success report-failure results]
-  (letfn [(print-report! [success?]
-            (doseq [:let [reporter (if success? report-success report-failure)
-                          reports (reporter results)]
-                    report reports]
-              (test/do-report report))
-            success?)]
-    (-> results
-        success?
-        print-report!)))
-
-(defn reporter
-  "Returns a function that
-  - takes the result of `stest/check`
-  - reports that result to clojure.test
-  - returns true if all checks succeeded, and false otherwise
-
-  Arguments:
-  - `abbrev-result` should be `stest/abbrev-result`
-  - `explain-out` should be `spec/explain-out`
-  - `getval` should be `::stest/val`
-
-  where `stest` is `clojure.spec.test` and `spec` is `clojure.spec` (or their
-  alpha or cljs equivalent).
-  "
-  [abbrev-result explain-out getval]
-  (let [failure-report (partial failure-report abbrev-result explain-out getval)]
-    (partial report-results! success-report failure-report)))
+(def option-keyword
+  "The keyword where `stest/check` will look for options to forward to
+  `quick-check`."
+  (if (cljs?)
+    :clojure.spec.test.check/opts
+    :clojure.test.check/opts))
 
 (defn normalise-opts
-  "Returns the map `opts`, with the :opts key (if present) replaced with
-  `opt-kw`.
+  "Returns the map `opts`, with the :opts key (if present) replaced with the
+  host language specific `option-keyword`.
   "
-  [opt-kw opts]
+  [opts]
   (let [stc (:opts opts)]
     (cond-> (dissoc opts :opts)
-            stc (assoc opt-kw stc))))
+            stc (assoc option-keyword stc))))
 
-(defmacro defspec-test
-  "If tests are enabled, create a new `clojure.test` test named `name`.
+(def check-symbol
+  "The name of the host language specific `spec` library's `check` function or macro."
+  (if (cljs?)
+    `cljs.spec.test/check
+    `clojure.spec.test.alpha/check))
+
+(defmacro spec-test
+  "Check the function(s) named `sym-or-syms` against their specs.
 
   Arguments:
-  - `name` a symbol
-  - `check` the body of the test, a form that returns tests results
-  - `report-results` a function that takes the result of `check`, reports it
-    to `clojure.test` and returns true (if all tests succeeded) or false
-    otherwise.
+  - `sym-or-syms` a fully qualified symbol, or a list of fully qualified symbols.
+    The name(s) of the functions to check.
+  - `opts` a map of options for `clojure.spec.test.alpha/check`.
+    - The `:gen` key is handled by `cljs.spec.test/check` (see its documentation).
+    - The contents of the `:opts` key is passed on to
+      `clojure.test.check/quick-check` (see its documentation).
+    - Special case: inside the `:opts` key, the `:num-tests` key, which is not
+      handled by `quick-check`, is the number of checks that will be run for
+      each function (defaults to 1000).
   "
-  [name check report-results]
-  (when *load-tests*
-    `(def ~(vary-meta name assoc :test `#(~report-results ~check))
-       (fn [] (test/test-var (var ~name))))))
+  ([sym-or-syms]
+   `(->> (~check-symbol ~sym-or-syms)
+         (mimo/report-results! mimo/success-report mimo/failure-report)))
+  ([sym-or-syms opts]
+   (let [opts (normalise-opts opts)]
+     `(->> (~check-symbol ~sym-or-syms ~opts)
+           (mimo/report-results! mimo/success-report mimo/failure-report)))))
+
+(defmacro defspec-test
+  "Create a test named `name`, that checks the function(s) named `sym-or-syms`
+  against their specs.
+
+  Arguments:
+  - `name` a symbol.
+  - `sym-or-syms` a fully qualified symbol, or a list of fully qualified symbols.
+    The name(s) of the functions to check.
+  - `opts` a map of options for `clojure.spec.test.alpha/check`.
+    - The `:gen` key is handled by `cljs.spec.test/check` (see its documentation).
+    - The contents of the `:opts` key is passed on to
+      `clojure.test.check/quick-check` (see its documentation).
+    - Special case: inside the `:opts` key, the `:num-tests` key, which is not
+      handled by `quick-check`, is the number of checks that will be run for
+      each function (defaults to 1000).
+  "
+  ([name sym-or-syms]
+   `(test/deftest ~name (spec-test ~sym-or-syms)))
+  ([name sym-or-syms opts]
+   `(test/deftest ~name (spec-test ~sym-or-syms ~opts))))

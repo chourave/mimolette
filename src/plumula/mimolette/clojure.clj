@@ -21,38 +21,11 @@
 ; SOFTWARE.
 
 (ns plumula.mimolette.clojure
-  (:require [clojure.spec.test.alpha :as stest]
-            [clojure.spec.alpha :as spec]
-            [plumula.mimolette :as mimo]))
+  (:require [plumula.mimolette :as mimo]))
 
-(def report-results!
-  "A function that takes the result of `stest/check` and reports it to
-  `clojure.test`.
-  "
-  (mimo/reporter stest/abbrev-result spec/explain-out ::stest/val))
-
-(defmacro defspec-test
-  "Create a test named `name`, that checks the function(s) named `sym-or-syms`
-  against their specs.
-
-  Arguments:
-  - `name` a symbol.
-  - `sym-or-syms` a fully qualified symbol, or a list of fully qualified symbols.
-    The name(s) of the functions to check.
-  - `opts` a map of options for `clojure.spec.test.alpha/check`.
-    - The `:gen` key is handled by `clojure.spec.test.alpha/check` (see its
-      documentation).
-    - The contents of the `:opts` key is passed on to
-      `clojure.test.check/quick-check` (see its documentation).
-    - Special case: inside the `:opts` key, the `:num-tests` key, which is not
-      handled by `quick-check`, is the number of checks that will be run for
-      each function (defaults to 1000).
-  "
+(defmacro ^:deprecated defspec-test
+  "Deprecated. Use `plumula.mimolette/desfspec-test` instead."
   ([name sym-or-syms]
-   `(mimo/defspec-test ~name
-                       (stest/check ~sym-or-syms)
-                       report-results!))
+   `(mimo/defspec-test ~name ~sym-or-syms))
   ([name sym-or-syms opts]
-   `(mimo/defspec-test ~name
-                       (stest/check ~sym-or-syms ~(mimo/normalise-opts :clojure.spec.test.check/opts opts))
-                       report-results!)))
+   `(mimo/defspec-test ~name ~sym-or-syms ~opts)))

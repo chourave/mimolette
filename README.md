@@ -11,29 +11,12 @@ Check your [specs](https://clojure.org/guides/spec) from `clojure.test` and
 
 
 ## Usage
+In your test namespace, require Mimolette. This works both for Clojure and
+ClojureScript.
 
-In your test namespace, require Mimolette. For the moment, we need different
-includes for Clojure and ClojureScript. I will be able to unify them when
-ClojureScript adds the `.alpha` suffix to its namespace.
-
-#### Including Mimolette in Clojure
 ```clj
 (ns whatever.my-test
-  (:require [plumula.mimolette.clojure :refer [defspec-test]]))
-```
-
-#### Including Mimolette in ClojureScript
-```clj
-(ns whatever.my-test
-  (:require [plumula.mimolette.cljs :refer-macros [defspec-test]]))
-```
-
-#### Including Mimolette in mixed-mode files
-```clj
-(ns whatever.my-test
-  (:require
-    #?(:clj [plumula.mimolette.clojure :refer [defspec-test]]
-       :cljs [plumula.mimolette.cljs :refer-macros [defspec-test]])))
+  (:require [plumula.mimolette :refer [defspec-test]]))
 ```
 
 ### Generating tests for your function
@@ -92,10 +75,16 @@ Finally, the `:num-tests` key adds another round of magic: it isn’t actually
 interpreted by `quick-check`. Instead, `stest/check` passes it as the `num-tests`
 parameter to `quick-check`.
 
+## Troubleshooting
+###No tests are generated
+`defspec-test` will only generate tests for specs that it knows about, so you
+want to make sur that your specs are actually loaded. If your specs reside in
+the same namespace as your functions, then that’s already taken care of. If your
+specs have a namespace of their own, then make sure to require that from your
+tests. This is especially true in ClojureScript, Clojure seems to be more
+forgiving here.
+
 ## Known limitations
-- Currently, Clojure and ClojureScript need to require different namespaces. I
-  could fix this either with elaborate trickery, or by waiting for ClojureScript
-  to add the alpha suffix to its spec namespaces. I’m choosing the latter.
 - There is no test suite. Now that side-effect-free functions have been broken
   out of the original macro, they should be easier to test.
 - The handling of options is incredibly convoluted and ought to be straightened
