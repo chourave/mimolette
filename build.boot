@@ -23,6 +23,12 @@
 (set-env! :dependencies [['plumula/soles "0.2.0-SNAPSHOT" :scope "test"]])
 (require '[plumula.soles :refer :all])
 
+(task-options!
+  pom  {:description "Run clojure spec tests from clojure test."
+        :url         "https://github.com/plumula/mimolette"
+        :scm         {:url "https://github.com/plumula/mimolette"}
+        :license     {"MIT" "http://www.opensource.org/licenses/mit-license.php"}})
+
 (add-dependencies!
   (:compile org.clojure/test.check))
 
