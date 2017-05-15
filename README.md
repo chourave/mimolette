@@ -40,8 +40,10 @@ It is not necessary to use a collection when checking a single function:
 ```
 
 #### Testing whole namespaces
-You might find the [`enumerate-namespace`](https://clojure.github.io/clojure/branch-master/clojure.spec-api.html#clojure.spec.test/enumerate-namespace)
-functions useful for checking all the functions of one or more namespaces against their respective specs.
+You might find the
+[`enumerate-namespace`](https://clojure.github.io/clojure/branch-master/clojure.spec-api.html#clojure.spec.test/enumerate-namespace)
+function useful for checking all the functions of one or more namespaces against
+their respective specs.
 
 ```clj
 (defspec-test test-namespaces (stest/enumerate-namespace 'my.namespace))
@@ -59,8 +61,8 @@ restrict the number of values tested. For instance, this code would test
 (defspec-test test-foo-spec `my-function {:opts {:num-tests 10}})
 ```
 
-The underlying mechanism is a little convoluted. If you pass a map as third parameter to
-`defspec-test`, that parameter will get passed on as the opts to 
+The underlying mechanism is a little convoluted. If you pass a map as third
+parameter to `defspec-test`, that parameter will get passed on as the opts to
 [`stest/check`](https://clojure.github.io/clojure/branch-master/clojure.spec-api.html#clojure.spec.test/check).
 
 `stest/check` will in turn pass a special parameter on to
