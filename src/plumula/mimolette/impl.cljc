@@ -63,6 +63,19 @@
   [results]
   (every? nil? (map :failure results)))
 
+(defn print-report!
+  "Prints a test-report for `results`, formatting them with
+  - `report-success` if `success?` is true
+  - `report-failure` otherwise
+  Returns `success?`
+  "
+  [report-success report-failure results success?]
+  (doseq [:let [reporter (if success? report-success report-failure)
+                reports (reporter results)]
+          report reports]
+    (test/do-report report))
+  success?)
+
 (defn report-results!
   "Given a list of `results` from `stest/check`
   - returns true if all checks succeeded, and false otherwise
@@ -77,12 +90,6 @@
   - `results` should be the result of `stest/check`
   "
   [report-success report-failure results]
-  (letfn [(print-report! [success?]
-            (doseq [:let [reporter (if success? report-success report-failure)
-                          reports (reporter results)]
-                    report reports]
-              (test/do-report report))
-            success?)]
-    (-> results
-        success?
-        print-report!)))
+  (->> results
+       success?
+       (print-report! report-success report-failure results)))
