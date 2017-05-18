@@ -38,4 +38,4 @@
   '(:compile
      [org.clojure/test.check "0.9.0"]))
 
-(soles! 'plumula/mimolette "0.1.0")
+(soles! 'plumula/mimolette "0.2.0-SNAPSHOT")
