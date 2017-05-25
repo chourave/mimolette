@@ -20,22 +20,18 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-(set-env! :dependencies '[[plumula/soles "0.3.0" :scope "test"
-                           :exclusions [org.clojure/clojurescript
-                                        org.clojure/clojure]]])
+(set-env! :dependencies '[[plumula/soles "0.4.0" :scope "test"]])
 (require '[plumula.soles :refer :all])
+
+(soles! 'plumula/mimolette "0.2.0-SNAPSHOT"
+        :dependencies '((:provided
+                          [org.clojure/clojure "1.9.0-alpha16"]
+                          [org.clojure/clojurescript "1.9.521"])
+                         (:compile
+                           [org.clojure/test.check "0.9.0"])))
 
 (task-options!
   pom {:description "Run clojure spec tests from clojure test."
        :url         "https://github.com/plumula/mimolette"
        :scm         {:url "https://github.com/plumula/mimolette"}
        :license     {"MIT" "http://www.opensource.org/licenses/mit-license.php"}})
-
-(add-dependencies!
-  '(:provided
-     [org.clojure/clojure "1.9.0-alpha16"]
-     [org.clojure/clojurescript "1.9.521"])
-  '(:compile
-     [org.clojure/test.check "0.9.0"]))
-
-(soles! 'plumula/mimolette "0.2.0-SNAPSHOT")
