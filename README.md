@@ -2,26 +2,61 @@
 
 [](dependency)
 ```clojure
-[plumula/mimolette "0.1.0"] ;; latest release
+[plumula/mimolette "0.2.0"] ;; latest release
 ```
 [](/dependency)
 
 Check your [specs](https://clojure.org/guides/spec) from `clojure.test` and
 `cljs.test`. 
 
+Here we check `a-function` and `another-function` against their specs:
+```clj
+(ns whatever.my-test
+  (:require [whatever.my :refer [a-function another-function]] ; The functions we’re going to test
 
-## Usage
-In your test namespace, require Mimolette. This works both for Clojure and
-ClojureScript.
+            [whatever.my.spec]                                 ; The specs for our functions are
+                                                               ; in another namespace, load them
+
+            [plumula.mimolette.alpha :refer [defspec-test]]))  ; Use the `alpha` version for recent
+                                                               ; releases of spec
+
+(defspec-test test-foo-spec `[a-function another-function])    ; Test `a-function` and `another-function`
+                                                               ; againts their respective specs and name
+                                                               ; the test `test-foo-spec`
+```
+
+## Supported versions of Clojure(Script)
+Mimolette works with Clojure `1.9.0-alpha8` and upwards, and ClojureScript
+`1.9.183` and upwards. This is because it relies on the `spec.test/abbrev-result`
+function.
+
+For Clojure versions `1.9.alpha-8` to `1.9.alpha-15` and ClojureScript version
+`1.9.183` to `1.9.521`, you need to require mimolette’s non-`alpha` namespace.
 
 ```clj
 (ns whatever.my-test
   (:require [plumula.mimolette :refer [defspec-test]]))
 ```
 
-### Generating tests for your function
-Use Mimolette to create a test named `test-foo-spec`, that will check
-`a-function` and `another-functnion` against their specs.
+Starting from Clojure `1.9.alpha-16` and ClojureScript `1.9.542`, you need to
+require mimolette’s `alpha` namespace.
+
+```clj
+(ns whatever.my-test
+  (:require [plumula.mimolette.alpha :refer [defspec-test]]))
+```
+
+This is a consequence of the Clojure team [adding][spec-split] an `alpha` suffix
+to spec’s namespaces.
+ 
+[spec-split]: https://clojure.org/community/devchangelog#__a_href_https_groups_google_com_d_msg_clojure_10dbf7w2iqo_ec37tzp5aqaj_1_9_spec_split_a_apr_26_2017
+
+## Usage
+In your test namespace, require Mimolette – choosing either the `alpha`- or the
+non-`alpha`- namespace depending on your [version](#supported-versions-of-clojurescript)
+of Clojure(Script). Mimolette works both for Clojure and ClojureScript.
+
+You’re now ready to test your functions against their specs.
 
 #### Testing functions
 ```clj
@@ -33,7 +68,7 @@ most convenient way of getting them is to use the syntax quote as in the example
 above.
 
 #### Testing a single function
-It is not necessary to use a collection when checking a single function:
+You can drop the wrapping collection if you’re only checking a single function:
 
 ```clj
 (defspec-test test-foo-spec `yet-another-function)
@@ -41,7 +76,7 @@ It is not necessary to use a collection when checking a single function:
 
 #### Testing whole namespaces
 You might find the
-[`enumerate-namespace`](https://clojure.github.io/clojure/branch-master/clojure.spec-api.html#clojure.spec.test/enumerate-namespace)
+[`enumerate-namespace`][enumerate-namespace]
 function useful for checking all the functions of one or more namespaces against
 their respective specs.
 
@@ -51,7 +86,10 @@ their respective specs.
                                                            yet-another.namespace]))
 ```
 
-(assuming `stest` is an alias for `clojure.spec.test.alpha` or `cljs.spec.test`).
+(assuming `stest` is an alias for `spec.test`).
+
+[enumerate-namespace]: https://clojure.github.io/clojure/branch-master/clojure.spec-api.html#clojure.spec.test/enumerate-namespace
+
 
 #### Limiting the number of tests
 If your test suite is getting too slow because of spec checks, you might want to

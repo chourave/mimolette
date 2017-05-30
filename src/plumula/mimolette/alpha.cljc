@@ -20,17 +20,17 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-(ns plumula.mimolette
+(ns plumula.mimolette.alpha
   (:require [plumula.mimolette.impl :as impl]
-            [#?(:clj clojure.spec.test :cljs cljs.spec.test) :as stest]
-            [#?(:clj clojure.spec :cljs cljs.spec) :as spec])
-  #?(:cljs (:require-macros plumula.mimolette)))
+            [#?(:clj clojure.spec.test.alpha :cljs cljs.spec.test.alpha) :as stest]
+            [#?(:clj clojure.spec.alpha :cljs cljs.spec.alpha) :as spec])
+  #?(:cljs (:require-macros plumula.mimolette.alpha)))
 
 (def check
   "The relevant spec.test.check macro for our target platform"
   (if (impl/cljs?)
-    'cljs.spec.test/check
-    'clojure.spec.test/check))
+    'cljs.spec.test.alpha/check
+    'clojure.spec.test.alpha/check))
 
 (def spec-shim (reify impl/SpecShim
                  (abbrev-result [this x] (stest/abbrev-result x))

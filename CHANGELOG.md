@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.2.0] – 2017-05-30
+
+### Added
+- The `plumula.mimolette.alpha` namespace for interfacing with recent versions
+  of spec that use the `alpha` suffix
+
+### Changed
+- The unsuffixed `plumula.mimolette` namespace no longer tries to guess whether
+  to use the alpha suffix for spec based on the target language. Instead, the
+  user should use `plumula.mimolette.alpha` if they use alpha-suffixed spec,
+  and `plumula.mimolette` otherwise.
+
+### Removed
+- Removed the deprecated Clojure and ClojureScript specific namespaces
+
 ## [0.1.0] – 2017-05-18
 
 ### Added
@@ -20,5 +35,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   development stages. They’re not really doing any harm so I’m leaving them in
   so far.
 
-[Unreleased]: https://github.com/plumula/mimolette/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/plumula/mimolette/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/plumula/mimolette/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/plumula/mimolette/compare/init...0.1.0

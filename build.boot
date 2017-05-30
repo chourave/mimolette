@@ -23,10 +23,10 @@
 (set-env! :dependencies '[[plumula/soles "0.4.1" :scope "test"]])
 (require '[plumula.soles :refer :all])
 
-(soles! 'plumula/mimolette "0.2.0-SNAPSHOT"
+(soles! 'plumula/mimolette "0.2.0"
         :dependencies '((:provided
-                          [org.clojure/clojure "1.9.0-alpha16"]
-                          [org.clojure/clojurescript "1.9.521"])
+                          [org.clojure/clojure "1.9.0-alpha8"]
+                          [org.clojure/clojurescript "1.9.183"])
                          (:compile
                            [org.clojure/test.check "0.9.0"])))
 
