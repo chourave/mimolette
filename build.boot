@@ -23,7 +23,7 @@
 (set-env! :dependencies '[[plumula/soles "0.4.1" :scope "test"]])
 (require '[plumula.soles :refer :all])
 
-(soles! 'plumula/mimolette "0.2.0"
+(soles! 'plumula/mimolette "0.2.1-SNAPSHOT"
         :dependencies '((:provided
                           [org.clojure/clojure "1.9.0-alpha8"]
                           [org.clojure/clojurescript "1.9.183"])
@@ -34,4 +34,4 @@
   pom #(assoc % :description "Run clojure spec tests from clojure test."
                 :url "https://github.com/plumula/mimolette"
                 :scm {:url "https://github.com/plumula/mimolette"}
-                :license {"MIT" "http://www.opensource.org/licenses/mit-license.php"}))
+                :license {"MIT" "https://opensource.org/licenses/MIT"}))
