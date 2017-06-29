@@ -26,16 +26,21 @@
             [#?(:clj clojure.spec.alpha :cljs cljs.spec.alpha) :as spec])
   #?(:cljs (:require-macros plumula.mimolette.alpha)))
 
-(def check
-  "The relevant spec.test.check macro for our target platform"
-  (if (impl/cljs?)
-    'cljs.spec.test.alpha/check
-    'clojure.spec.test.alpha/check))
+(def spec-shim
+  "Wrap `clojure.spec.alpha` functions in a namespace-independent shim."
+  (reify impl/SpecShim
+    (abbrev-result [this x] (stest/abbrev-result x))
+    (explain-out [this ed] (spec/explain-out ed))
+    (failure-val [this failure] (::stest/val failure))))
 
-(def spec-shim (reify impl/SpecShim
-                 (abbrev-result [this x] (stest/abbrev-result x))
-                 (explain-out [this ed] (spec/explain-out ed))
-                 (failure-val [this failure] (::stest/val failure))))
+(defmacro check
+  "Check functions against their specs, whether we’re running on Clojure or
+  ClojureScript.
+  "
+  [& args]
+  `(impl/if-cljs
+     (cljs.spec.test.alpha/check ~@args)
+     (clojure.spec.test.alpha/check ~@args)))
 
 (defmacro defspec-test
   "Create a test named `name`, that checks the function(s) named `sym-or-syms`
@@ -56,4 +61,4 @@
   ([name sym-or-syms]
    `(defspec-test ~name ~sym-or-syms nil))
   ([name sym-or-syms opts]
-   `(impl/defspec-test ~check spec-shim ~name ~sym-or-syms ~opts)))
+   `(impl/defspec-test check spec-shim ~name ~sym-or-syms ~opts)))

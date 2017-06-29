@@ -22,7 +22,8 @@
 
 (ns plumula.mimolette.impl
   (:require [clojure.string :as string]
-            [#?(:clj clojure.test :cljs cljs.test) :as test])
+            [#?(:clj clojure.test :cljs cljs.test) :as test]
+    #?(:cljs [cljs.analyzer]))
   #?(:cljs (:require-macros plumula.mimolette.impl)))
 
 (defprotocol SpecShim
@@ -100,26 +101,25 @@
        success?
        (print-report! report-success report-failure results)))
 
-(defn cljs?
-  "True if we are macro-expanding into ClojureScript."
-  []
-  (boolean (find-ns 'cljs.analyzer)))
+(defn cljs-env?
+  "Take the &env from a macro, and tell whether we are expanding into cljs."
+  [env]
+  (boolean (:ns env)))
 
-(def option-keyword
-  "The keyword where `spec.test/check` will look for options to forward to
-  `quick-check`."
-  (if (cljs?)
-    :clojure.spec.test.check/opts
-    :clojure.test.check/opts))
+(defmacro if-cljs
+  "Return then if we are generating cljs code and else for Clojure code.
+   https://groups.google.com/d/msg/clojurescript/iBY5HaQda4A/w1lAQi9_AwsJ"
+  [then else]
+  (if (cljs-env? &env) then else))
 
 (defn normalise-opts
   "Returns the map `opts`, with the :opts key (if present) replaced with the
   host language specific `option-keyword`.
   "
-  [opts]
+  [opts canonical-keyword]
   (let [stc (:opts opts)]
     (cond-> (dissoc opts :opts)
-            stc (assoc option-keyword stc))))
+            stc (assoc canonical-keyword stc))))
 
 (defmacro spec-test
   "Check the function(s) named `sym-or-syms` against their specs.
@@ -138,9 +138,17 @@
       each function (defaults to 1000).
   "
   [check spec-shim sym-or-syms opts]
-  (let [opts (normalise-opts opts)]
-    `(->> (~check ~sym-or-syms ~opts)
+  `(let [opts# (->> (if-cljs :clojure.test.check/opts :clojure.spec.test.check/opts)
+                    (normalise-opts ~opts))]
+     (->> (~check ~sym-or-syms opts#)
           (report-results! success-report (partial failure-report ~spec-shim)))))
+
+(defmacro deftest
+  ""
+  [name & body]
+  `(if-cljs
+    (cljs.test/deftest ~name ~@body)
+    (clojure.test/deftest ~name ~@body)))
 
 (defmacro defspec-test
   "Create a test named `name`, that checks the function(s) named `sym-or-syms`
@@ -161,4 +169,5 @@
       each function (defaults to 1000).
   "
   [check spec-shim name sym-or-syms opts]
-  `(test/deftest ~name (spec-test ~check ~spec-shim ~sym-or-syms ~opts)))
+  `(deftest ~name
+     (spec-test ~check ~spec-shim ~sym-or-syms ~opts)))

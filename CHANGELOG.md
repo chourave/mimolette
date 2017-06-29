@@ -7,8 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 
--
+### Fixed
 
+- The ClojureScript version would require `clojure.test` instead of `cljs.test`
+- The Clojure/ClojureScript detection could get confused depending on where
+  ClojureScript appears on the classpath
 
 ## [0.2.0] – 2017-05-30
 

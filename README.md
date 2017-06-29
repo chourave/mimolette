@@ -2,7 +2,7 @@
 
 [](dependency)
 ```clojure
-[plumula/mimolette "0.2.0"] ;; latest release
+[plumula/mimolette "0.2.1-SNAPSHOT"] ;; latest release
 ```
 [](/dependency)
 
@@ -149,7 +149,15 @@ forgiving here.
   out of the original macro, they should be easier to test.
 - The handling of options is incredibly convoluted and ought to be straightened
   out.
+- You sometimes get the stack trace shown below. This probably happens when spec
+  gives up generating input values after too many failed attempts, and should
+  be handled more gracefully.
 
+```
+Uncaught exception, not in assertion.
+expected: nil
+  actual: java.lang.IllegalArgumentException: Don't know how to create ISeq from: java.lang.AssertionError
+```
 
 ## Project history and acknowledgements
 
