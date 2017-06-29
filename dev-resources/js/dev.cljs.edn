@@ -1,0 +1,2 @@
+{:require [plumula.mimolette.dev]
+ :compiler-options {:asset-path "js/dev.out"}}
