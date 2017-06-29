@@ -21,7 +21,7 @@
 ; SOFTWARE.
 
 (def +project+ 'plumula/mimolette)
-(def +version+ "0.2.1-SNAPSHOT")
+(def +version+ "0.2.1")
 
 (set-env! :dependencies '[[plumula/soles "0.5.0" :scope "test"]])
 (require '[plumula.soles :refer [add-dir! add-dependencies! testing deploy-local deploy-snapshot deploy-release]])

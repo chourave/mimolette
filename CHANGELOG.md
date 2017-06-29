@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.2.1] – 2017-06-29
+
 ### Fixed
 
 - The ClojureScript version would require `clojure.test` instead of `cljs.test`
@@ -52,6 +54,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   so far.
 
 
-[Unreleased]: https://github.com/plumula/mimolette/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/plumula/mimolette/compare/0.2.1...HEAD
+[0.2.0]: https://github.com/plumula/mimolette/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/plumula/mimolette/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/plumula/mimolette/compare/init...0.1.0
