@@ -144,7 +144,7 @@
           (report-results! success-report (partial failure-report ~spec-shim)))))
 
 (defmacro deftest
-  ""
+  "Define a new test, whether we’re running on Clojure or ClojureScript."
   [name & body]
   `(if-cljs
     (cljs.test/deftest ~name ~@body)
