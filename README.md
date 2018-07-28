@@ -133,7 +133,7 @@ parameter to `quick-check`.
 
 ## Troubleshooting
 
-###No tests are generated
+### No tests are generated
 
 `defspec-test` will only generate tests for specs that it knows about, so you
 want to make sur that your specs are actually loaded. If your specs reside in
