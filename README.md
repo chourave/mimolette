@@ -133,7 +133,7 @@ parameter to `quick-check`.
 
 ## Troubleshooting
 
-###No tests are generated
+### No tests are generated
 
 `defspec-test` will only generate tests for specs that it knows about, so you
 want to make sur that your specs are actually loaded. If your specs reside in
@@ -142,6 +142,11 @@ specs have a namespace of their own, then make sure to require that from your
 tests. This is especially true in ClojureScript, Clojure seems to be more
 forgiving here.
 
+### `lein test` Fails with `ClassCastException`
+If `lein test` fails with:
+```java.util.concurrent.ExecutionException: java.lang.ClassCastException: clojure.lang.AFunction$1 cannot be cast to clojure.lang.MultiFn```
+
+Then adding `:monkeypatch-clojure-test false` to your `project.clj` will probably fix it, however this disables `lein retest`. This behavior is reported in [this issue](https://github.com/technomancy/leiningen/issues/2173).
 
 ## Known limitations
 
